@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Défi Conjugaison — Espace professeur (Supabase — test)</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#25344b;background:#f3f5f9}*{box-sizing:border-box}body{margin:0}header{background:#253b63;color:white;padding:24px max(18px,calc((100vw - 1050px)/2))}header h1{margin:0 0 6px}header p{margin:0}main{max-width:1050px;margin:22px auto;padding:0 15px}.card{background:white;border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #0001}.notice{background:#fff4d6;padding:12px;border-radius:8px;margin-bottom:18px}.controls{display:flex;gap:15px;flex-wrap:wrap}.controls label{display:flex;flex-direction:column;gap:6px;font-weight:bold}select,button{font:inherit;padding:9px 12px;border-radius:7px;border:1px solid #b9c4d5}button{cursor:pointer;background:#253b63;color:white;border-color:#253b63}button:focus-visible,select:focus-visible{outline:3px solid #83aaf7}button.secondary{background:white;color:#253b63}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stat{background:#edf1f7;padding:15px;border-radius:8px}.stat strong{font-size:1.6rem}.stat p{margin:5px 0 0}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #dce1e8}th{background:#edf1f7}.scroll{overflow-x:auto}.link{border:0;background:none;color:#1759a6;text-decoration:underline;padding:0;font-weight:bold}.muted{color:#607089}.tags{display:flex;gap:8px;flex-wrap:wrap}.tag{display:inline-block;padding:5px 9px;background:#edf1f7;border-radius:6px}.bad{background:#ffe4df;color:#9d3024}.good{background:#e2f3e6;color:#216738}#details[hidden]{display:none}.detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px}h2{margin-top:0}h3{margin-bottom:8px}@media(max-width:550px){.stats{grid-template-columns:1fr}.card{padding:14px}th,td{padding:8px}}
+input{font:inherit;padding:10px;border:1px solid #b9c4d5;border-radius:7px;width:100%;max-width:400px}#connexion[hidden],#recuperation[hidden],#nouveauMotDePasse[hidden],#dashboard[hidden],#etat[hidden]{display:none}.auth-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.error{color:#9d3024}.success{color:#216738}
+</style>
+</head>
+<body>
+<header><h1>Défi Conjugaison</h1><p>Espace professeur — Test Supabase</p></header>
+<main>
+<div class="notice"><strong>Version de test :</strong> uniquement des comptes et résultats fictifs. Les résultats proviennent de Supabase ; aucun résultat n'est généré automatiquement.</div>
+<section class="card" id="connexion"><h2>Connexion professeur</h2><form id="formConnexion"><p><label>Adresse électronique<br><input id="email" type="email" autocomplete="username" required></label></p><p><label>Mot de passe<br><input id="motdepasse" type="password" autocomplete="current-password" required></label></p><button type="submit" id="btnConnexion">Se connecter</button> <button type="button" class="secondary" id="motDePasseOublie">Mot de passe oublié ?</button></form></section>
+<section class="card" id="recuperation" hidden><h2>Réinitialiser mon mot de passe</h2><p>Saisis l’adresse électronique de ton compte professeur. Tu recevras un lien pour choisir un nouveau mot de passe.</p><form id="formRecuperation"><p><label>Adresse électronique<br><input id="emailRecuperation" type="email" autocomplete="email" required></label></p><button type="submit" id="btnRecuperation">Envoyer le lien</button> <button type="button" class="secondary" id="retourConnexion">Retour à la connexion</button></form></section>
+<section class="card" id="nouveauMotDePasse" hidden><h2>Choisir un nouveau mot de passe</h2><form id="formNouveauMotDePasse"><p><label>Nouveau mot de passe (12 caractères minimum)<br><input id="nouveauMdp" type="password" autocomplete="new-password" minlength="12" required></label></p><p><label>Confirmer le mot de passe<br><input id="confirmationMdp" type="password" autocomplete="new-password" minlength="12" required></label></p><button type="submit" id="btnNouveauMdp">Enregistrer mon mot de passe</button></form></section>
+<p id="etat" role="status" aria-live="polite"></p>
+<div id="dashboard" hidden>
+<section class="card"><div class="detail-head"><h2>Tableau de bord</h2><div class="auth-actions"><button type="button" id="actualiser" class="secondary">Actualiser</button><button type="button" id="deconnexion" class="secondary">Se déconnecter</button></div></div><div class="controls"><label>Classe<select id="classe"></select></label><label>Activité<select id="type"><option value="tous">Toutes les activités</option><option value="entrainement">Entraînement</option><option value="evaluation">Évaluation</option></select></label></div></section>
+<section class="card"><h2>Vue d'ensemble</h2><div class="stats"><div class="stat"><strong id="nbEleves">—</strong><p>Élèves</p></div><div class="stat"><strong id="moyenne">—</strong><p>Réussite moyenne</p></div><div class="stat"><strong id="nbSeances">—</strong><p>Résultats affichés</p></div></div></section>
+<section class="card"><h2>Résultats des élèves</h2><p class="muted">Clique sur un code élève pour afficher ses résultats. Chaque ligne de résultat correspond à un verbe et un temps enregistrés dans Supabase.</p><div class="scroll"><table><thead><tr><th>Code élève</th><th>Résultats</th><th>Réussite</th><th>Détail</th></tr></thead><tbody id="resultats"></tbody></table></div></section>
+<section class="card" id="details" hidden><div class="detail-head"><h2 id="titreDetail">Élève</h2><button type="button" class="secondary" id="fermer">Fermer</button></div><div class="stats"><div class="stat"><strong id="eleveSeances">—</strong><p>Résultats</p></div><div class="stat"><strong id="eleveMoyenne">—</strong><p>Réussite</p></div><div class="stat"><strong id="eleveReponses">—</strong><p>Questions (total)</p></div></div><h3>Résultats enregistrés</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Activité</th><th>Verbe</th><th>Temps</th><th>Résultat</th></tr></thead><tbody id="seancesDetail"></tbody></table></div><h3>Verbes et temps à retravailler</h3><p class="muted">Un score moyen inférieur à 70 % est signalé comme difficulté.</p><div class="tags" id="difficultes"></div></section>
+</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+'use strict';
+// REMPLACER CES DEUX VALEURS UNIQUEMENT AVEC LES INFORMATIONS PUBLIQUES DU PROJET.
+// Ne jamais utiliser une secret key, service_role key ou un mot de passe ici.
+const SUPABASE_URL = 'https://aqjzlufbtypwspcocwjv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_s6r2ycOWMtmeUmfBBIF6zA_XdOEWsOB';
+const $ = id => document.getElementById(id);
+const pct = (points, total) => total ? Math.round(points / total * 100) + ' %' : '—';
+const node = (tag, value) => {const el=document.createElement(tag);el.textContent=String(value);return el;};
+const cell = (tr, value) => tr.appendChild(node('td',value));
+const message = (txt, error=false) => { $('etat').hidden=false; $('etat').textContent=txt; $('etat').className=error?'error':'muted'; };
+let db, classes=[], eleves=[], seances=[], currentStudent=null, recoveryMode=false;
+const scoreSum = rows => rows.reduce((a,s)=>({points:a.points+s.score*s.nb_questions/100,total:a.total+s.nb_questions}),{points:0,total:0});
+function filtered(){return seances.filter(s=>$('type').value==='tous'||s.activite===$('type').value);}
+function render(){
+  const classId=Number($('classe').value), students=eleves.filter(e=>e.classe_id===classId);
+  const ids=new Set(students.map(e=>e.id));
+  const rows=filtered().filter(s=>ids.has(s.eleve_id));
+  const sum=scoreSum(rows);
+  $('nbEleves').textContent=students.length;
+  $('moyenne').textContent=pct(sum.points,sum.total);
+  $('nbSeances').textContent=rows.length;
+  $('resultats').replaceChildren();
+  for(const e of students){
+    const r=rows.filter(s=>s.eleve_id===e.id), v=scoreSum(r), tr=document.createElement('tr');
+    cell(tr,e.code);cell(tr,r.length);cell(tr,pct(v.points,v.total));
+    const td=document.createElement('td'), btn=node('button','Consulter');btn.type='button';btn.className='link';btn.addEventListener('click',()=>showStudent(e.id));td.appendChild(btn);tr.appendChild(td);$('resultats').appendChild(tr);
+  }
+  if(currentStudent && ids.has(currentStudent))showStudent(currentStudent,false);
+  else {currentStudent=null;$('details').hidden=true;}
+}
+function showStudent(id,scroll=true){
+  currentStudent=id;
+  const e=eleves.find(x=>x.id===id), rows=filtered().filter(s=>s.eleve_id===id);
+  const sum=scoreSum(rows);
+  $('titreDetail').textContent='Élève '+e.code;
+  $('eleveSeances').textContent=rows.length;
+  $('eleveMoyenne').textContent=pct(sum.points,sum.total);
+  $('eleveReponses').textContent=sum.total;
+  $('seancesDetail').replaceChildren();
+  for(const s of [...rows].sort((a,b)=>b.date_seance.localeCompare(a.date_seance))){
+    const tr=document.createElement('tr');
+    [new Date(s.date_seance).toLocaleDateString('fr-FR'),s.activite==='evaluation'?'Évaluation':'Entraînement',s.verbe,s.temps,s.score+' % ('+s.nb_questions+' questions)'].forEach(v=>cell(tr,v));
+    $('seancesDetail').appendChild(tr);
+  }
+  const groups=new Map();
+  for(const s of rows){const k=s.verbe+' — '+s.temps, old=groups.get(k)||{points:0,total:0};old.points+=s.score*s.nb_questions/100;old.total+=s.nb_questions;groups.set(k,old);}
+  $('difficultes').replaceChildren();let count=0;
+  for(const [name,v] of groups){if(v.total && v.points/v.total<.7){const el=node('span',name+' ('+pct(v.points,v.total)+')');el.className='tag bad';$('difficultes').appendChild(el);count++;}}
+  if(!count){const el=node('span',rows.length?'Aucune difficulté sous le seuil de 70 %':'Aucun résultat pour ce filtre');el.className='tag good';$('difficultes').appendChild(el);}
+  $('details').hidden=false;
+  if(scroll)$('details').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function fetchAll(table,columns){
+  const data=[];let start=0;
+  while(true){const {data:batch,error}=await db.from(table).select(columns).range(start,start+999);
+    if(error)throw error;data.push(...batch);if(batch.length<1000)break;start+=1000;}
+  return data;
+}
+async function loadData(){
+  message('Chargement des résultats…');
+  classes=await fetchAll('classes','id,nom,niveau');
+  eleves=await fetchAll('eleves','id,code,classe_id');
+  seances=await fetchAll('resultats','id,eleve_id,activite,verbe,temps,score,nb_questions,date_seance');
+  classes.sort((a,b)=>a.nom.localeCompare(b.nom,'fr'));
+  const previous=$('classe').value;
+  $('classe').replaceChildren();
+  for(const c of classes){const opt=document.createElement('option');opt.value=c.id;opt.textContent=c.nom+' ('+c.niveau+')';$('classe').appendChild(opt);}
+  if(classes.some(c=>String(c.id)===previous))$('classe').value=previous;
+  currentStudent=null;render();
+  message(seances.length?'Données chargées depuis Supabase.':'Connexion réussie. Aucun résultat enregistré pour le moment.');
+}
+async function checkAccess(){
+  const {data:{user},error}=await db.auth.getUser();
+  if(error||!user){if(!recoveryMode)showAuthPanel('connexion');return;}
+  const {data:prof,error:accessError}=await db.from('professeurs').select('utilisateur_id').eq('utilisateur_id',user.id).maybeSingle();
+  if(accessError)throw accessError;
+  if(!prof){await db.auth.signOut();$('dashboard').hidden=true;$('connexion').hidden=false;message('Ce compte ne possède pas d’autorisation professeur.',true);return;}
+  if(recoveryMode)return;
+  $('connexion').hidden=true;$('recuperation').hidden=true;$('nouveauMotDePasse').hidden=true;$('dashboard').hidden=false;await loadData();
+}
+$('formConnexion').addEventListener('submit',async ev=>{
+  ev.preventDefault();$('btnConnexion').disabled=true;
+  try{message('Connexion en cours…');const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('motdepasse').value});if(error)throw error;$('motdepasse').value='';await checkAccess();}
+  catch(err){message('Connexion impossible : '+err.message,true);}
+  finally{$('btnConnexion').disabled=false;}
+});
+function showAuthPanel(panel){
+  $('connexion').hidden=panel!=='connexion';
+  $('recuperation').hidden=panel!=='recuperation';
+  $('nouveauMotDePasse').hidden=panel!=='nouveau';
+  $('dashboard').hidden=true;
+}
+$('motDePasseOublie').addEventListener('click',()=>{
+  $('emailRecuperation').value=$('email').value;
+  showAuthPanel('recuperation');
+  $('etat').hidden=true;
+});
+$('retourConnexion').addEventListener('click',()=>{showAuthPanel('connexion');$('etat').hidden=true;});
+$('formRecuperation').addEventListener('submit',async ev=>{
+  ev.preventDefault();
+  $('btnRecuperation').disabled=true;
+  try{
+    const redirectTo=location.origin+location.pathname;
+    const {error}=await db.auth.resetPasswordForEmail($('emailRecuperation').value.trim(),{redirectTo});
+    if(error)throw error;
+    message('Si cette adresse correspond à un compte, un lien de réinitialisation a été envoyé. Ouvre le lien depuis le courriel le plus récent.');
+  }catch(err){message('Envoi impossible : '+err.message,true);}
+  finally{$('btnRecuperation').disabled=false;}
+});
+$('formNouveauMotDePasse').addEventListener('submit',async ev=>{
+  ev.preventDefault();
+  const pwd=$('nouveauMdp').value;
+  if(pwd!==$('confirmationMdp').value){message('Les deux mots de passe ne correspondent pas.',true);return;}
+  $('btnNouveauMdp').disabled=true;
+  try{
+    const {error}=await db.auth.updateUser({password:pwd});
+    if(error)throw error;
+    $('nouveauMdp').value='';$('confirmationMdp').value='';
+    recoveryMode=false;
+    await db.auth.signOut();
+    history.replaceState(null,'',location.pathname);
+    showAuthPanel('connexion');
+    message('Mot de passe modifié. Tu peux maintenant te connecter avec ton nouveau mot de passe.');
+  }catch(err){message('Modification impossible : '+err.message,true);}
+  finally{$('btnNouveauMdp').disabled=false;}
+});
+$('deconnexion').addEventListener('click',async()=>{await db.auth.signOut();$('dashboard').hidden=true;$('connexion').hidden=false;$('motdepasse').value='';message('Déconnexion effectuée.');});
+$('actualiser').addEventListener('click',()=>loadData().catch(err=>message('Chargement impossible : '+err.message,true)));
+$('classe').addEventListener('change',()=>{currentStudent=null;render();});
+$('type').addEventListener('change',render);
+$('fermer').addEventListener('click',()=>{$('details').hidden=true;currentStudent=null;});
+(async()=>{
+  if(SUPABASE_URL.startsWith('REMPLACER_')||SUPABASE_PUBLISHABLE_KEY.startsWith('REMPLACER_')){
+    $('connexion').hidden=true;message('Configuration nécessaire : renseigner Project URL et Publishable key dans le fichier HTML.',true);return;
+  }
+  if(!window.supabase){message('Impossible de charger la bibliothèque Supabase. Vérifie la connexion Internet.',true);$('connexion').hidden=true;return;}
+  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  db.auth.onAuthStateChange((event)=>{
+    if(event==='PASSWORD_RECOVERY'){
+      recoveryMode=true;
+      showAuthPanel('nouveau');
+      message('Lien vérifié. Choisis maintenant ton nouveau mot de passe.');
+    }
+  });
+  // Le fragment #access_token est utilisé par Supabase pour les liens de récupération.
+  const isRecoveryLink=location.hash.includes('type=recovery') || new URLSearchParams(location.search).get('type')==='recovery';
+  if(isRecoveryLink){recoveryMode=true;showAuthPanel('nouveau');message('Vérification du lien de récupération…');}
+  try{
+    await db.auth.initialize();
+    if(!recoveryMode)await checkAccess();
+  }catch(err){message('Erreur Supabase : '+err.message,true);}
+
+})();
+</script>
+</body>
+</html>
