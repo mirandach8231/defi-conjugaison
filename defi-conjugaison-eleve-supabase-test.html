@@ -200,7 +200,13 @@ async function syncCheck(){
  const {data:classe,error:c}=await syncDb.from('classes').select('nom,niveau').eq('id',eleve.classe_id).single();
  if(c)throw c;
  syncStudent={id:eleve.id,code:eleve.code,classe:classe.nom,niveau:classe.niveau};
- syncDisplay();syncMessage('Connexion sécurisée active. Les prochaines séries terminées seront transmises au professeur.');
+ syncDisplay();
+ if(eleve.doit_changer_mot_de_passe===true){
+  syncEl('syncChangePassword').classList.remove('hidden');
+  syncMessage('Tu dois changer ton mot de passe avant de poursuivre.');
+  return;
+}
+syncEl('syncChangePassword').classList.add('hidden');syncMessage('Connexion sécurisée active. Les prochaines séries terminées seront transmises au professeur.');
  syncEl('grade').value=classe.niveau;syncEl('grade').dispatchEvent(new Event('change'));
 }
 async function syncResults(answerList,activityMode){
