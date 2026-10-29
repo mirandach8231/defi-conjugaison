@@ -353,7 +353,7 @@ syncEl('syncLogin').addEventListener('click',async()=>{
     bouton.disabled=false;
   }
 });
-syncEl('syncLogout').addEventListener('click',async()=>{if(syncDb)await syncDb.auth.signOut();syncStudent=null;syncDisplay();syncMessage('Déconnecté. Les exercices restent disponibles sans connexion.');});
+syncEl('syncLogout').addEventListener('click',async()=>{if(syncDb)await syncDb.auth.signOut();syncStudent=null;syncDisplay();syncMessage('Déconnecté. Connecte-toi pour accéder aux activités.');});
 (async()=>{
  if(!window.supabase){syncMessage('Synchronisation indisponible : bibliothèque Supabase non chargée.',true);return;}
  syncDb=window.supabase.createClient(SYNC_URL,SYNC_PUBLIC_KEY);
