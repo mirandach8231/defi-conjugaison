@@ -203,7 +203,7 @@ function openProfile(){if(!$('classcode').value.trim()||!$('nickname').value.tri
 function saveResult(score,total){if(!activeProfile)return;let store=getStore();let profile=store[activeProfile];if(!profile)return;profile.results.push({date:new Date().toISOString(),mode,score,total,theme:'',verbs:[...new Set(questions.map(q=>q.v))].join(', ')});saveStore(store);renderHistory()}
 function renderHistory(){let p=getStore()[activeProfile];$('history').replaceChildren();if(!p)return;let h=make('strong',`Mes résultats (${p.results.length} séance(s))`);$('history').append(h);p.results.slice(-8).reverse().forEach(r=>{let d=new Date(r.date).toLocaleDateString('fr-FR');$('history').append(make('p',`${d} · ${r.mode==='eval'?'Test pour l’évaluation':r.mode==='fiche'?'Conjugaison':'Entraînement'} · ${r.score}/${r.total} · ${r.verbs}`))})}
 
-let p=getStore()[activeProfile];if(!p){alert('Ouvre ton profil avant d’exporter.');return}let rows=[['date','classe','pseudonyme','mode','score','total','univers','verbes'],...p.results.map(r=>[r.date,p.classe,p.pseudo,r.mode,r.score,r.total,r.theme,r.verbs])];let csv='\uFEFF'+rows.map(row=>row.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');let blob=new Blob([csv],{type:'text/csv;charset=utf-8'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='defi-conjugaison-resultats.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+
 </script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 'use strict';
