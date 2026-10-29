@@ -179,7 +179,17 @@ $('start').onclick=()=>{
     return;
   }
   start();
-};$('verify').onclick=check;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();locked?advance():check()}});$('next').onclick=advance;$('quit').onclick=()=>{$('play').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('home').onclick=()=>{$('results').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('retry').onclick=()=>start(lastWrong);
+};$('verify').onclick=check;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();locked?advance():check()}});$('next').onclick=advance;$('quit').onclick=()=>{$('play').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('home').onclick=()=>{$('results').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('retry').onclick=()=>{
+  if(!document.getElementById('syncChangePassword').classList.contains('hidden')){
+    alert('Tu dois d’abord choisir un nouveau mot de passe.');
+    document.getElementById('syncChangePassword').scrollIntoView({
+      behavior:'smooth',
+      block:'center'
+    });
+    return;
+  }
+  start(lastWrong);
+};
 
 const KEY='defi-conjugaison-v21-local';let activeProfile='';
 function getStore(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
