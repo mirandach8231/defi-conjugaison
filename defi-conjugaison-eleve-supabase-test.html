@@ -288,8 +288,10 @@ async function syncCheck(){
     'Connexion sécurisée active. Les prochaines séries terminées seront transmises au professeur.'
   );
 
-  syncEl('grade').value=classe.niveau;
-  syncEl('grade').dispatchEvent(new Event('change'));
+syncEl('grade').value=classe.niveau;
+syncEl('grade').dispatchEvent(new Event('change'));
+
+syncActivitiesAccess(true);
 }
 async function syncResults(answerList,activityMode){
  if(!syncDb||!syncStudent){syncMessage('Résultat non transmis : connecte-toi pour synchroniser les prochaines séries.');return;}
