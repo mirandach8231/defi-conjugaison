@@ -169,7 +169,17 @@ function showQ(){current=questions[index];locked=false;let {v,t,p}=current;txt('
 function check(){if(locked)return;let entered=normalize($('answer').value);if(!entered){$('answer').focus();return}let q=current;let correct=q.good.some(x=>normalize(x)===entered);locked=true;answers.push({q,entered,correct});if(!correct)wrong.push(q);$('answer').disabled=true;$('verify').classList.add('hidden');$('next').classList.remove('hidden');$('next').textContent=index===questions.length-1?'Voir mon bilan →':'Question suivante →';let div=make('div','');div.className='feedback'+(correct?'':' bad');div.append(make('strong',correct?'✓ Bonne réponse !':'À retravailler'),make('p',correct?'Tu as trouvé la bonne forme.':'Réponse attendue : '+q.good.join(' ou ')));if(!correct)div.append(make('p','Observe le radical, la terminaison et, pour les temps composés, l’auxiliaire.'));$('feedback').append(div);}
 function advance(){index++;if(index>=questions.length)finish();else showQ()}
 function finish(){lastWrong=[...wrong];$('play').classList.add('hidden');$('results').classList.remove('hidden');let ok=answers.filter(x=>x.correct).length;saveResult(ok,questions.length);syncResults(answers,mode);txt('score',`${ok} / ${questions.length}`);txt('scoreDesc',ok===questions.length?'Bravo, toutes les formes sont maîtrisées !':`${wrong.length} forme(s) à revoir. Tu peux recommencer uniquement tes erreurs.`);$('review').replaceChildren();for(let a of answers){let p=make('p',(a.correct?'✓ ':'✗ ')+a.q.v+' · '+T.find(x=>x[0]===a.q.t)[1]+' · '+subject(a.q.t,a.q.p)+' : '+a.q.good.join(' / '));if(!a.correct)p.className='warn';$('review').append(p)}$('retry').disabled=!wrong.length;$('bar').style.width='100%';$('results').scrollIntoView({behavior:'smooth',block:'start'});}
-$('start').onclick=()=>start();$('verify').onclick=check;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();locked?advance():check()}});$('next').onclick=advance;$('quit').onclick=()=>{$('play').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('home').onclick=()=>{$('results').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('retry').onclick=()=>start(lastWrong);
+$('start').onclick=()=>{
+  if(!document.getElementById('syncChangePassword').classList.contains('hidden')){
+    alert('Tu dois d’abord choisir un nouveau mot de passe.');
+    document.getElementById('syncChangePassword').scrollIntoView({
+      behavior:'smooth',
+      block:'center'
+    });
+    return;
+  }
+  start();
+};$('verify').onclick=check;$('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();locked?advance():check()}});$('next').onclick=advance;$('quit').onclick=()=>{$('play').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('home').onclick=()=>{$('results').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'})};$('retry').onclick=()=>start(lastWrong);
 
 const KEY='defi-conjugaison-v21-local';let activeProfile='';
 function getStore(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
