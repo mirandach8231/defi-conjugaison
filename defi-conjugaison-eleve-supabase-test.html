@@ -221,15 +221,19 @@ function syncActivitiesAccess(autorise){
 }function syncDisplay(){
   syncEl('syncDisconnected').classList.toggle('hidden',!!syncStudent);
   syncEl('syncConnected').classList.toggle('hidden',!syncStudent);
+
   syncEl('syncIdentity').textContent=syncStudent
     ? 'Connecté : '+syncStudent.code+' (classe '+syncStudent.classe+')'
     : '';
+
   if(!syncStudent){
-    syncEl('syncChangePassword').classList.add('hidden');syncActivitiesAccess(
-  !!syncStudent &&
-  syncEl('syncChangePassword').classList.contains('hidden')
-);
+    syncEl('syncChangePassword').classList.add('hidden');
   }
+
+  syncActivitiesAccess(
+    !!syncStudent &&
+    syncEl('syncChangePassword').classList.contains('hidden')
+  );
 }
 async function syncCheck(){
   syncStudent=null;
