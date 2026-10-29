@@ -195,13 +195,10 @@ $('start').onclick=()=>{
   start(lastWrong);
 };
 
-const KEY='defi-conjugaison-v21-local';let activeProfile='';
-function getStore(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
-function saveStore(data){try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch(e){txt('profileStatus','Stockage indisponible sur ce navigateur.');return false}}
-function profileKey(){return $('grade').value+'|'+$('classcode').value.trim().toUpperCase()+'|'+$('nickname').value.trim().toLowerCase()}
-function openProfile(){if(!$('classcode').value.trim()||!$('nickname').value.trim()){txt('profileStatus','Renseigne un code de classe et un pseudonyme.');return}activeProfile=profileKey();let store=getStore();if(!store[activeProfile])store[activeProfile]={grade:$('grade').value,classe:$('classcode').value.trim(),pseudo:$('nickname').value.trim(),results:[]};saveStore(store);txt('profileStatus','Profil local ouvert : '+store[activeProfile].pseudo+' · '+store[activeProfile].classe);renderHistory()}
-function saveResult(score,total){if(!activeProfile)return;let store=getStore();let profile=store[activeProfile];if(!profile)return;profile.results.push({date:new Date().toISOString(),mode,score,total,theme:'',verbs:[...new Set(questions.map(q=>q.v))].join(', ')});saveStore(store);renderHistory()}
-function renderHistory(){let p=getStore()[activeProfile];$('history').replaceChildren();if(!p)return;let h=make('strong',`Mes résultats (${p.results.length} séance(s))`);$('history').append(h);p.results.slice(-8).reverse().forEach(r=>{let d=new Date(r.date).toLocaleDateString('fr-FR');$('history').append(make('p',`${d} · ${r.mode==='eval'?'Test pour l’évaluation':r.mode==='fiche'?'Conjugaison':'Entraînement'} · ${r.score}/${r.total} · ${r.verbs}`))})}
+function saveResult(score,total){
+  // Ancien suivi local désactivé.
+  // Les résultats sont désormais transmis via Supabase.
+}
 
 
 </script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
