@@ -189,7 +189,16 @@ const SYNC_PUBLIC_KEY = 'sb_publishable_s6r2ycOWMtmeUmfBBIF6zA_XdOEWsOB';
 let syncDb = null, syncStudent = null;
 const syncEl = id => document.getElementById(id);
 function syncMessage(t,err=false){const el=syncEl('syncStatus');el.textContent=t;el.style.color=err?'#a81919':'#42536b';}
-function syncDisplay(){syncEl('syncDisconnected').classList.toggle('hidden',!!syncStudent);syncEl('syncConnected').classList.toggle('hidden',!syncStudent);syncEl('syncIdentity').textContent=syncStudent?'Connecté : '+syncStudent.code+' (classe '+syncStudent.classe+')':'';}
+function syncDisplay(){
+  syncEl('syncDisconnected').classList.toggle('hidden',!!syncStudent);
+  syncEl('syncConnected').classList.toggle('hidden',!syncStudent);
+  syncEl('syncIdentity').textContent=syncStudent
+    ? 'Connecté : '+syncStudent.code+' (classe '+syncStudent.classe+')'
+    : '';
+  if(!syncStudent){
+    syncEl('syncChangePassword').classList.add('hidden');
+  }
+}
 async function syncCheck(){
  syncStudent=null;
  const {data:{user},error}=await syncDb.auth.getUser();
