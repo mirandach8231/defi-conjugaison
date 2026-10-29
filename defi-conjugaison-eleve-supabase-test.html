@@ -209,7 +209,16 @@ const SYNC_PUBLIC_KEY = 'sb_publishable_s6r2ycOWMtmeUmfBBIF6zA_XdOEWsOB';
 let syncDb = null, syncStudent = null;
 const syncEl = id => document.getElementById(id);
 function syncMessage(t,err=false){const el=syncEl('syncStatus');el.textContent=t;el.style.color=err?'#a81919':'#42536b';}
-function syncDisplay(){
+function syncActivitiesAccess(autorise){
+  ['activityPanel','referencePanel','worksheetPanel'].forEach(id=>{
+    document.getElementById(id).classList.toggle('hidden',!autorise);
+  });
+
+  if(!autorise){
+    document.getElementById('play').classList.add('hidden');
+    document.getElementById('results').classList.add('hidden');
+  }
+}function syncDisplay(){
   syncEl('syncDisconnected').classList.toggle('hidden',!!syncStudent);
   syncEl('syncConnected').classList.toggle('hidden',!syncStudent);
   syncEl('syncIdentity').textContent=syncStudent
