@@ -238,6 +238,42 @@ syncEl('syncLogin').addEventListener('click',async()=>{
  catch(e){syncMessage('Connexion impossible : '+e.message,true);}
  finally{syncEl('syncLogin').disabled=false;}
 });
+ syncEl('syncSavePassword').addEventListener('click', async()=>{
+  const nouveau=syncEl('syncNewPassword').value;
+  const confirmation=syncEl('syncConfirmPassword').value;
+  const bouton=syncEl('syncSavePassword');
+
+  if(nouveau.length<12 || nouveau.length>128){
+    syncMessage('Le mot de passe doit contenir entre 12 et 128 caractères.',true);
+    return;
+  }
+
+  if(nouveau!==confirmation){
+    syncMessage('Les deux mots de passe ne correspondent pas.',true);
+    return;
+  }
+
+  bouton.disabled=true;
+  syncMessage('Enregistrement en cours…');
+
+  try{
+    const {error}=await syncDb.auth.updateUser({password:nouveau});
+    if(error)throw error;
+
+    syncEl('syncNewPassword').value='';
+    syncEl('syncConfirmPassword').value='';
+
+    syncMessage(
+      'Mot de passe modifié. Vérification du compte en cours…'
+    );
+
+    await syncCheck();
+  }catch(e){
+    syncMessage('Modification non confirmée : '+e.message,true);
+  }finally{
+    bouton.disabled=false;
+  }
+});
 syncEl('syncLogout').addEventListener('click',async()=>{if(syncDb)await syncDb.auth.signOut();syncStudent=null;syncDisplay();syncMessage('Déconnecté. Les exercices restent disponibles sans connexion.');});
 (async()=>{
  if(!window.supabase){syncMessage('Synchronisation indisponible : bibliothèque Supabase non chargée.',true);return;}
