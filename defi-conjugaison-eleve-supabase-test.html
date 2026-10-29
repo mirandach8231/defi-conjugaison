@@ -161,7 +161,7 @@ async function syncCheck(){
  syncStudent=null;
  const {data:{user},error}=await syncDb.auth.getUser();
  if(error||!user){syncDisplay();return;}
- const {data:eleve,error:e}=await syncDb.from('eleves').select('id,code,classe_id').eq('utilisateur_id',user.id).maybeSingle();
+ const {data:eleve,error:e}=await syncDb.from('eleves').select('id,code,classe_id,doit_changer_mot_de_passe').eq('utilisateur_id',user.id).maybeSingle();
  if(e)throw e;
  if(!eleve){await syncDb.auth.signOut();syncDisplay();syncMessage('Ce compte ne correspond à aucun élève autorisé.',true);return;}
  const {data:classe,error:c}=await syncDb.from('classes').select('nom,niveau').eq('id',eleve.classe_id).single();
