@@ -225,7 +225,10 @@ function syncActivitiesAccess(autorise){
     ? 'Connecté : '+syncStudent.code+' (classe '+syncStudent.classe+')'
     : '';
   if(!syncStudent){
-    syncEl('syncChangePassword').classList.add('hidden');
+    syncEl('syncChangePassword').classList.add('hidden');syncActivitiesAccess(
+  !!syncStudent &&
+  syncEl('syncChangePassword').classList.contains('hidden')
+);
   }
 }
 async function syncCheck(){
