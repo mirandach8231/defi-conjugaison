@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Défi Conjugaison — Espace professeur (démo V2)</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#25344b;background:#f3f5f9}*{box-sizing:border-box}body{margin:0}header{background:#253b63;color:white;padding:24px max(18px,calc((100vw - 1050px)/2))}header h1{margin:0 0 6px}header p{margin:0}main{max-width:1050px;margin:22px auto;padding:0 15px}.card{background:white;border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #0001}.notice{background:#fff4d6;padding:12px;border-radius:8px;margin-bottom:18px}.controls{display:flex;gap:15px;flex-wrap:wrap}.controls label{display:flex;flex-direction:column;gap:6px;font-weight:bold}select,button{font:inherit;padding:9px 12px;border-radius:7px;border:1px solid #b9c4d5}button{cursor:pointer;background:#253b63;color:white;border-color:#253b63}button:focus-visible,select:focus-visible{outline:3px solid #83aaf7}button.secondary{background:white;color:#253b63}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stat{background:#edf1f7;padding:15px;border-radius:8px}.stat strong{font-size:1.6rem}.stat p{margin:5px 0 0}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px;border-bottom:1px solid #dce1e8}th{background:#edf1f7}.scroll{overflow-x:auto}.link{border:0;background:none;color:#1759a6;text-decoration:underline;padding:0;font-weight:bold}.muted{color:#607089}.tags{display:flex;gap:8px;flex-wrap:wrap}.tag{display:inline-block;padding:5px 9px;background:#edf1f7;border-radius:6px}.bad{background:#ffe4df;color:#9d3024}.good{background:#e2f3e6;color:#216738}#details[hidden]{display:none}.detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px}h2{margin-top:0}h3{margin-bottom:8px}@media(max-width:550px){.stats{grid-template-columns:1fr}.card{padding:14px}th,td{padding:8px}}
+#connexionProf label{display:block;margin:12px 0 5px;font-weight:bold}#connexionProf input{width:100%;max-width:400px;padding:10px;border:1px solid #b9c4d5;border-radius:7px;font:inherit}#connexionProf button{margin-top:12px}#espaceDemandes[hidden],#connexionProf[hidden]{display:none}.error{color:#a32020}.status{font-weight:bold}
+</style>
+</head>
+<body>
+<header><h1>Défi Conjugaison</h1><p>Espace professeur — Démonstration V2</p></header>
+<main>
+<div class="notice"><strong>Démonstration uniquement :</strong> élèves et résultats entièrement fictifs. Cette page est publique et ne reçoit aucune donnée réelle.</div>
+<section class="card" id="connexionProf"><h2>Connexion professeur — demandes de réinitialisation</h2><p class="muted">Cette connexion est nécessaire pour consulter les demandes réelles. Les résultats affichés plus bas restent fictifs.</p><form id="formConnexion"><label for="emailProf">Adresse e-mail professeur</label><input id="emailProf" type="email" autocomplete="username" required><label for="mdpProf">Mot de passe</label><input id="mdpProf" type="password" autocomplete="current-password" required><div><button type="submit">Se connecter</button></div></form><p id="messageConnexion" role="status" aria-live="polite"></p></section>
+<section class="card" id="espaceDemandes" hidden><div class="detail-head"><h2>Demandes de réinitialisation</h2><button id="deconnexionProf" class="secondary" type="button">Se déconnecter</button></div><p class="muted">Consultation uniquement : aucun mot de passe n'est modifié depuis cette page de test.</p><button id="actualiserDemandes" type="button">Actualiser les demandes</button> <button id="testerAutorisation" class="secondary" type="button">Tester l’autorisation professeur</button><p id="resultatTestAutorisation" role="status" aria-live="polite"></p><p id="etatDemandes" role="status" aria-live="polite"></p><div class="scroll"><table><thead><tr><th>Code élève</th><th>Date</th><th>Statut</th></tr></thead><tbody id="listeDemandes"></tbody></table></div></section>
+<section class="card"><h2>Choisir une classe et une activité</h2><div class="controls"><label>Classe<select id="classe"><option>5e A</option><option>4e B</option><option>3e C</option></select></label><label>Activité<select id="type"><option value="tous">Toutes les activités</option><option value="entrainement">Entraînement</option><option value="evaluation">Évaluation</option></select></label></div></section>
+<section class="card"><h2>Vue d'ensemble</h2><div class="stats"><div class="stat"><strong id="nbEleves">—</strong><p>Élèves</p></div><div class="stat"><strong id="moyenne">—</strong><p>Réussite moyenne</p></div><div class="stat"><strong id="nbSeances">—</strong><p>Séances affichées</p></div></div></section>
+<section class="card"><h2>Résultats des élèves</h2><p class="muted">Clique sur un code élève pour afficher ses séances et ses difficultés.</p><div class="scroll"><table><thead><tr><th>Code élève</th><th>Séances</th><th>Réussite</th><th>Détail</th></tr></thead><tbody id="resultats"></tbody></table></div></section>
+<section class="card" id="details" hidden><div class="detail-head"><h2 id="titreDetail">Élève</h2><button type="button" class="secondary" id="fermer">Fermer</button></div><div class="stats"><div class="stat"><strong id="eleveSeances">—</strong><p>Séances</p></div><div class="stat"><strong id="eleveMoyenne">—</strong><p>Réussite</p></div><div class="stat"><strong id="eleveReponses">—</strong><p>Réponses correctes</p></div></div><h3>Séances réalisées</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Activité</th><th>Verbe</th><th>Temps</th><th>Résultat</th></tr></thead><tbody id="seancesDetail"></tbody></table></div><h3>Verbes et temps à retravailler</h3><p class="muted">Une réussite inférieure à 70 % signale ici une difficulté (seuil choisi uniquement pour cette démonstration).</p><div class="tags" id="difficultes"></div></section>
+</main>
+<script>
+'use strict';
+// Jeu de données de démonstration. Aucune donnée d'élève réel.
+const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
+const VERBES=['travailler','être','avoir','réussir','ranger','lancer','acheter','jeter','appeler','payer','entendre','faire','dire','pouvoir','vouloir','aller','tenir'];
+const TEMPS=['présent','imparfait','futur simple','passé composé','passé simple','conditionnel présent','subjonctif présent','plus-que-parfait'];
+const SEANCES=[];
+Object.values(CLASSES).flat().forEach((code,studentIndex)=>{
+  for(let n=0;n<6;n++){
+    const type=n%3===2?'evaluation':'entrainement';
+    const total=10;
+    const correct=Math.max(3,Math.min(10,10-((studentIndex*3+n*2)%8)));
+    const date=new Date(2026,8,8+n*7+studentIndex%4).toISOString().slice(0,10);
+    SEANCES.push({code,date,type,verbe:VERBES[(studentIndex+n*3)%VERBES.length],temps:TEMPS[(studentIndex*2+n)%TEMPS.length],correct,total});
+  }
+});
+const $=id=>document.getElementById(id);
+const pct=(correct,total)=>total?Math.round(100*correct/total)+' %':'—';
+const filtered=code=>SEANCES.filter(s=>(!code||s.code===code)&&($('type').value==='tous'||s.type===$('type').value));
+function node(tag,content){const el=document.createElement(tag);el.textContent=String(content);return el}
+function cell(tr,content){tr.appendChild(node('td',content))}
+let currentStudent=null;
+function render(){
+  const students=CLASSES[$('classe').value],sessions=filtered().filter(s=>students.includes(s.code));
+  const correct=sessions.reduce((a,s)=>a+s.correct,0),total=sessions.reduce((a,s)=>a+s.total,0);
+  $('nbEleves').textContent=students.length;$('moyenne').textContent=pct(correct,total);$('nbSeances').textContent=sessions.length;
+  $('resultats').replaceChildren();
+  students.forEach(code=>{
+    const list=sessions.filter(s=>s.code===code),c=list.reduce((a,s)=>a+s.correct,0),t=list.reduce((a,s)=>a+s.total,0);
+    const tr=document.createElement('tr');cell(tr,code);cell(tr,list.length);cell(tr,pct(c,t));
+    const td=document.createElement('td'),button=node('button','Consulter');button.className='link';button.type='button';button.addEventListener('click',()=>showStudent(code));td.appendChild(button);tr.appendChild(td);$('resultats').appendChild(tr);
+  });
+  if(currentStudent&&students.includes(currentStudent))showStudent(currentStudent);else{$('details').hidden=true;currentStudent=null}
+}
+function showStudent(code){
+  currentStudent=code;const sessions=filtered(code),correct=sessions.reduce((a,s)=>a+s.correct,0),total=sessions.reduce((a,s)=>a+s.total,0);
+  $('titreDetail').textContent='Élève '+code;$('eleveSeances').textContent=sessions.length;$('eleveMoyenne').textContent=pct(correct,total);$('eleveReponses').textContent=correct+' / '+total;
+  $('seancesDetail').replaceChildren();
+  sessions.forEach(s=>{const tr=document.createElement('tr');[s.date,s.type==='evaluation'?'Évaluation':'Entraînement',s.verbe,s.temps,s.correct+' / '+s.total].forEach(x=>cell(tr,x));$('seancesDetail').appendChild(tr)});
+  const groups=new Map();sessions.forEach(s=>{const k=s.verbe+' — '+s.temps;const old=groups.get(k)||{correct:0,total:0};old.correct+=s.correct;old.total+=s.total;groups.set(k,old)});
+  $('difficultes').replaceChildren();let count=0;
+  for(const [name,score] of groups){if(score.correct/score.total<0.7){const badge=node('span',name+' ('+pct(score.correct,score.total)+')');badge.className='tag bad';$('difficultes').appendChild(badge);count++}}
+  if(!count){const badge=node('span',sessions.length?'Aucune difficulté sous le seuil de 70 %':'Aucune séance pour ce filtre');badge.className='tag good';$('difficultes').appendChild(badge)}
+  $('details').hidden=false;$('details').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('classe').addEventListener('change',()=>{currentStudent=null;render()});$('type').addEventListener('change',render);$('fermer').addEventListener('click',()=>{$('details').hidden=true;currentStudent=null});render();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  'use strict';
+  const URL = 'https://aqjzlufbtypwspcocwjv.supabase.co';
+  const PUBLIC_KEY = 'sb_publishable_s6r2ycOWMtmeUmfBBIF6zA_XdOEWsOB';
+  const byId = id => document.getElementById(id);
+  const client = window.supabase?.createClient(URL, PUBLIC_KEY, {
+    auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false }
+  });
+  const showMessage = message => { byId('messageConnexion').textContent = message; };
+  function showLogin() {
+    byId('connexionProf').hidden = false;
+    byId('espaceDemandes').hidden = true;
+    byId('listeDemandes').replaceChildren();
+  }
+  function td(row, value) {
+    const cell = document.createElement('td');
+    cell.textContent = value;
+    row.appendChild(cell);
+  }
+  async function loadRequests() {
+    const label = byId('etatDemandes');
+    label.textContent = 'Chargement…';
+    byId('listeDemandes').replaceChildren();
+    const { data, error } = await client.from('demandes_reinitialisation')
+      .select('code_eleve,date_demande,statut')
+      .order('date_demande', { ascending: false }).limit(100);
+    if (error) { label.textContent = 'Lecture impossible : ' + error.message; return; }
+    label.textContent = data.length ? `${data.length} demande(s) affichée(s).` : 'Aucune demande.';
+    for (const item of data) {
+      const row = document.createElement('tr');
+      td(row, item.code_eleve);
+      td(row, new Date(item.date_demande).toLocaleString('fr-FR'));
+      td(row, item.statut);
+      byId('listeDemandes').appendChild(row);
+    }
+  }
+  async function checkTeacher() {
+    const { data: userData, error: userError } = await client.auth.getUser();
+    if (userError || !userData.user) { showLogin(); return; }
+    const { data, error } = await client.from('professeurs')
+      .select('utilisateur_id').eq('utilisateur_id', userData.user.id).limit(1);
+    if (error || !data?.length) {
+      await client.auth.signOut();
+      showLogin();
+      showMessage('Accès réservé aux comptes professeurs autorisés.');
+      return;
+    }
+    byId('connexionProf').hidden = true;
+    byId('espaceDemandes').hidden = false;
+    await loadRequests();
+  }
+  byId('formConnexion').addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!client) { showMessage('Bibliothèque Supabase indisponible.'); return; }
+    showMessage('Connexion en cours…');
+    const email = byId('emailProf').value.trim();
+    const password = byId('mdpProf').value;
+    const { error } = await client.auth.signInWithPassword({ email, password });
+    byId('mdpProf').value = '';
+    if (error) { showMessage('Connexion impossible. Vérifie tes identifiants.'); return; }
+    showMessage('');
+    await checkTeacher();
+  });
+  byId('testerAutorisation').addEventListener('click', async () => {
+    const bouton = byId('testerAutorisation');
+    const sortie = byId('resultatTestAutorisation');
+    bouton.disabled = true;
+    sortie.textContent = 'Test en cours…';
+    try {
+      const { data: sessionData, error: sessionError } = await client.auth.getSession();
+      if (sessionError || !sessionData.session?.access_token) {
+        sortie.textContent = 'Session professeur absente. Reconnecte-toi.';
+        return;
+      }
+      const reponse = await fetch(URL + '/functions/v1/traiter-reinitialisation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + sessionData.session.access_token,
+          'apikey': PUBLIC_KEY,
+        },
+        body: JSON.stringify({
+          demande_id: 999999,
+          mot_de_passe_temporaire: 'MotDePasseTest2026!',
+        }),
+      });
+      const resultat = await reponse.json();
+      sortie.textContent = 'HTTP ' + reponse.status + ' — ' + (resultat.message || 'Réponse sans message');
+    } catch (erreur) {
+      sortie.textContent = 'Échec du test : ' + erreur.message;
+    } finally {
+      bouton.disabled = false;
+    }
+  });
+  byId('actualiserDemandes').addEventListener('click', loadRequests);
+  byId('deconnexionProf').addEventListener('click', async () => {
+    await client.auth.signOut(); showLogin(); showMessage('Déconnecté.');
+  });
+  if (!client) showMessage('Impossible de charger Supabase.');
+})();
+</script>
+</body>
+</html>
