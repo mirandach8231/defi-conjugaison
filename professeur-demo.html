@@ -93,10 +93,13 @@ document.getElementById('formConnexionProfesseur')
       .maybeSingle();
 
     if (erreurProf || !professeur) {
-      await dbProf.auth.signOut();
-      message.textContent = 'Accès réservé aux professeurs.';
-      return;
-    }
+  console.log('Erreur Supabase :', erreurProf);
+  console.log('Professeur trouvé :', !!professeur);
+
+  await dbProf.auth.signOut();
+  message.textContent = 'Accès réservé aux professeurs.';
+  return;
+}
 
     message.textContent = 'Connexion professeur réussie.';
     document.getElementById('motDePasseProfesseur').value = '';
