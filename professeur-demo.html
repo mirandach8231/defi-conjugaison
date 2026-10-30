@@ -109,6 +109,16 @@ document.getElementById('tableauProfesseur').hidden = false;
 
 // Masquer le formulaire de connexion
 document.getElementById('connexionProfesseur').hidden = true;
+// Vérifier la récupération des résultats réels
+const { data: resultatsReels, error: erreurResultats } = await dbProf
+  .from('resultats')
+  .select('id, eleve_id, activite, verbe, temps, score, nb_questions, date_seance');
+
+if (erreurResultats) {
+  console.error('Erreur de récupération :', erreurResultats);
+} else {
+  console.log('Nombre de résultats réels récupérés :', resultatsReels.length);
+}
   });
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
 const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
