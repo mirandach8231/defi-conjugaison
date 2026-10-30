@@ -65,6 +65,42 @@ const dbProf = window.supabase.createClient(
     }
   }
 );
+// Connexion et vérification du compte professeur
+document.getElementById('formConnexionProfesseur')
+  .addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById('emailProfesseur').value.trim();
+    const password = document.getElementById('motDePasseProfesseur').value;
+    const message = document.getElementById('messageConnexionProfesseur');
+
+    message.textContent = 'Connexion en cours...';
+
+    const { data, error } = await dbProf.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      message.textContent = 'Connexion impossible : ' + error.message;
+      return;
+    }
+
+    const { data: professeur, error: erreurProf } = await dbProf
+      .from('professeurs')
+      .select('id')
+      .eq('utilisateur_id', data.user.id)
+      .maybeSingle();
+
+    if (erreurProf || !professeur) {
+      await dbProf.auth.signOut();
+      message.textContent = 'Accès réservé aux professeurs.';
+      return;
+    }
+
+    message.textContent = 'Connexion professeur réussie.';
+    document.getElementById('motDePasseProfesseur').value = '';
+  });
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
 const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
 const VERBES=['travailler','être','avoir','réussir','ranger','lancer','acheter','jeter','appeler','payer','entendre','faire','dire','pouvoir','vouloir','aller','tenir'];
