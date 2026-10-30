@@ -41,7 +41,7 @@
 
   <p id="messageConnexionProfesseur" role="status"></p>
 </section>
-<div class="notice"><strong>Démonstration uniquement :</strong> élèves et résultats entièrement fictifs. Cette page est publique et ne reçoit aucune donnée réelle.</div>
+<div class="notice"><strong>Espace professeur :</strong> les résultats affichés proviennent de la base de données Supabase. Leur consultation nécessite une authentification professeur. Phase de test en cours.</div>
 <div id="tableauProfesseur" hidden><section class="card"><h2>Choisir une classe et une activité</h2><div class="controls"><label>Classe<select id="classe"><option>5e A</option><option>4e B</option><option>3e C</option></select></label><label>Activité<select id="type"><option value="tous">Toutes les activités</option><option value="entrainement">Entraînement</option><option value="evaluation">Évaluation</option></select></label></div></section>
 <section class="card"><h2>Vue d'ensemble</h2><div class="stats"><div class="stat"><strong id="nbEleves">—</strong><p>Élèves</p></div><div class="stat"><strong id="moyenne">—</strong><p>Réussite moyenne</p></div><div class="stat"><strong id="nbSeances">—</strong><p>Séances affichées</p></div></div></section>
 <section class="card"><h2>Résultats des élèves</h2><p class="muted">Clique sur un code élève pour afficher ses séances et ses difficultés.</p><div class="scroll"><table><thead><tr><th>Code élève</th><th>Séances</th><th>Réussite</th><th>Détail</th></tr></thead><tbody id="resultats"></tbody></table></div></section>
