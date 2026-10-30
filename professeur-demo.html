@@ -101,8 +101,14 @@ document.getElementById('formConnexionProfesseur')
   return;
 }
 
-    message.textContent = 'Connexion professeur réussie.';
-    document.getElementById('motDePasseProfesseur').value = '';
+  message.textContent = 'Connexion professeur réussie.';
+document.getElementById('motDePasseProfesseur').value = '';
+
+// Afficher le tableau de bord après vérification du compte professeur
+document.getElementById('tableauProfesseur').hidden = false;
+
+// Masquer le formulaire de connexion
+document.getElementById('connexionProfesseur').hidden = true;
   });
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
 const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
