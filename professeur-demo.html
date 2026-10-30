@@ -192,7 +192,10 @@ Object.values(CLASSES).flat().forEach((code,studentIndex)=>{
 });
 const $=id=>document.getElementById(id);
 const pct=(correct,total)=>total?Math.round(100*correct/total)+' %':'—';
-const filtered=code=>SEANCES.filter(s=>(!code||s.code===code)&&($('type').value==='tous'||s.type===$('type').value));
+const filtered = code => SEANCES_REELLES.filter(
+  s => (!code || s.code === code) &&
+       ($('type').value === 'tous' || s.type === $('type').value)
+);
 function node(tag,content){const el=document.createElement(tag);el.textContent=String(content);return el}
 function cell(tr,content){tr.appendChild(node('td',content))}
 let currentStudent=null;
