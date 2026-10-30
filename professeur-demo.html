@@ -182,6 +182,30 @@ render();
 }
 });
 // Données réelles chargées depuis Supabase
+document.getElementById('deconnexionProfesseur')
+  .addEventListener('click', async function() {
+
+    const { error } = await dbProf.auth.signOut();
+
+    if (error) {
+      alert('Impossible de se déconnecter : ' + error.message);
+      return;
+    }
+
+    document.getElementById('tableauProfesseur').hidden = true;
+    document.getElementById('connexionProfesseur').hidden = false;
+
+    document.getElementById('messageConnexionProfesseur').textContent =
+      'Vous êtes déconnecté.';
+
+    document.getElementById('resultats').replaceChildren();
+    document.getElementById('seancesDetail').replaceChildren();
+    document.getElementById('difficultes').replaceChildren();
+    document.getElementById('details').hidden = true;
+
+    CLASSES_REELLES = {};
+    SEANCES_REELLES = [];
+  });
 let CLASSES_REELLES = {};
 let SEANCES_REELLES = [];
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
