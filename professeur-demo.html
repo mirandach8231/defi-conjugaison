@@ -203,6 +203,31 @@ document.getElementById('deconnexionProfesseur')
   });
 let CLASSES_REELLES = {};
 let SEANCES_REELLES = [];
+async function restaurerSessionProfesseur() {
+  const { data, error } = await dbProf.auth.getUser();
+
+  if (error || !data.user) {
+    return;
+  }
+
+  const { data: professeur, error: erreurProf } = await dbProf
+    .from('professeurs')
+    .select('utilisateur_id')
+    .eq('utilisateur_id', data.user.id)
+    .maybeSingle();
+
+  if (erreurProf || !professeur) {
+    await dbProf.auth.signOut();
+    return;
+  }
+
+  const chargementReussi = await chargerTableauProfesseur();
+
+  if (chargementReussi) {
+    document.getElementById('tableauProfesseur').hidden = false;
+    document.getElementById('connexionProfesseur').hidden = true;
+  }
+}
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
 
 const $=id=>document.getElementById(id);
@@ -249,6 +274,7 @@ function showStudent(code){
   $('details').hidden=false;$('details').scrollIntoView({behavior:'smooth',block:'start'});
 }
 $('classe').addEventListener('change',()=>{currentStudent=null;render()});$('type').addEventListener('change',render);$('fermer').addEventListener('click',()=>{$('details').hidden=true;currentStudent=null});render();
+restaurerSessionProfesseur();
 </script>
 </body>
 </html>
