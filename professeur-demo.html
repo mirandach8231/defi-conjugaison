@@ -145,6 +145,32 @@ classesReelles.forEach(classe => {
   option.textContent = classe.nom;
   menuClasses.appendChild(option);
 });
+  // Associer les élèves à leurs classes
+CLASSES_REELLES = {};
+
+classesReelles.forEach(classe => {
+  CLASSES_REELLES[classe.nom] = elevesReels
+    .filter(eleve => eleve.classe_id === classe.id)
+    .map(eleve => eleve.code);
+});
+
+// Associer chaque résultat à son élève
+SEANCES_REELLES = (resultatsReels || []).map(resultat => {
+  const eleve = elevesReels.find(e => e.id === resultat.eleve_id);
+
+  return {
+    code: eleve ? eleve.code : 'Inconnu',
+    date: resultat.date_seance,
+    type: resultat.activite,
+    verbe: resultat.verbe,
+    temps: resultat.temps,
+    correct: resultat.score,
+    total: resultat.nb_questions
+  };
+});
+
+console.log('Classes associées :', CLASSES_REELLES);
+console.log('Séances réelles préparées :', SEANCES_REELLES.length);
 }
 });
 // Données réelles chargées depuis Supabase
