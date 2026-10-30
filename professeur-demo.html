@@ -19,6 +19,21 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 'use strict';
+// Connexion au projet Supabase
+const SUPABASE_URL = 'https://aqjzlufbtypwspcocwjv.supabase.co';
+const SUPABASE_PUBLIC_KEY = 'sb_publishable_s6r2ycOWMtmeUmfBBIF6zA_XdOEWsOB';
+
+const dbProf = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLIC_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false
+    }
+  }
+);
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
 const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
 const VERBES=['travailler','être','avoir','réussir','ranger','lancer','acheter','jeter','appeler','payer','entendre','faire','dire','pouvoir','vouloir','aller','tenir'];
