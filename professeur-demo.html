@@ -88,7 +88,7 @@ document.getElementById('formConnexionProfesseur')
 
     const { data: professeur, error: erreurProf } = await dbProf
       .from('professeurs')
-      .select('id')
+    .select('utilisateur_id')
       .eq('utilisateur_id', data.user.id)
       .maybeSingle();
 
