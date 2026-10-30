@@ -119,7 +119,23 @@ if (erreurResultats) {
 } else {
   console.log('Nombre de résultats réels récupérés :', resultatsReels.length);
 }
-  });
+// Récupérer les élèves et les classes
+const { data: elevesReels, error: erreurEleves } = await dbProf
+  .from('eleves')
+  .select('id, code, classe_id');
+
+const { data: classesReelles, error: erreurClasses } = await dbProf
+  .from('classes')
+  .select('id, nom, niveau');
+
+if (erreurEleves || erreurClasses) {
+  console.error('Erreur élèves :', erreurEleves);
+  console.error('Erreur classes :', erreurClasses);
+} else {
+  console.log('Nombre d’élèves récupérés :', elevesReels.length);
+  console.log('Classes récupérées :', classesReelles.map(c => c.nom));
+}
+});
 
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
 const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
