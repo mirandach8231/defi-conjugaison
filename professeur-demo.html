@@ -179,19 +179,7 @@ render();
 let CLASSES_REELLES = {};
 let SEANCES_REELLES = [];
 // Jeu de données de démonstration. Aucune donnée d'élève réel.
-const CLASSES={'5e A':['5A-001','5A-002','5A-003','5A-004'],'4e B':['4B-001','4B-002','4B-003','4B-004'],'3e C':['3C-001','3C-002','3C-003','3C-004']};
-const VERBES=['travailler','être','avoir','réussir','ranger','lancer','acheter','jeter','appeler','payer','entendre','faire','dire','pouvoir','vouloir','aller','tenir'];
-const TEMPS=['présent','imparfait','futur simple','passé composé','passé simple','conditionnel présent','subjonctif présent','plus-que-parfait'];
-const SEANCES=[];
-Object.values(CLASSES).flat().forEach((code,studentIndex)=>{
-  for(let n=0;n<6;n++){
-    const type=n%3===2?'evaluation':'entrainement';
-    const total=10;
-    const correct=Math.max(3,Math.min(10,10-((studentIndex*3+n*2)%8)));
-    const date=new Date(2026,8,8+n*7+studentIndex%4).toISOString().slice(0,10);
-    SEANCES.push({code,date,type,verbe:VERBES[(studentIndex+n*3)%VERBES.length],temps:TEMPS[(studentIndex*2+n)%TEMPS.length],correct,total});
-  }
-});
+
 const $=id=>document.getElementById(id);
 const pct=(correct,total)=>total?Math.round(100*correct/total)+' %':'—';
 const filtered = code => SEANCES_REELLES.filter(
