@@ -164,7 +164,7 @@ SEANCES_REELLES = (resultatsReels || []).map(resultat => {
     type: resultat.activite,
     verbe: resultat.verbe,
     temps: resultat.temps,
-   correct: resultat.score * resultat.nb_questions / 100,
+  correct: Math.round(resultat.score * resultat.nb_questions / 100),
 total: resultat.nb_questions
   };
 });
