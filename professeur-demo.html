@@ -167,70 +167,13 @@ document.getElementById('tableauProfesseur').hidden = false;
 
 // Masquer le formulaire de connexion
 document.getElementById('connexionProfesseur').hidden = true;
-// Vérifier la récupération des résultats réels
-const { data: resultatsReels, error: erreurResultats } = await dbProf
-  .from('resultats')
-  .select('id, eleve_id, activite, verbe, temps, score, nb_questions, date_seance');
+// Charger les résultats depuis Supabase
+const chargementReussi = await chargerTableauProfesseur();
 
-if (erreurResultats) {
-  console.error('Erreur de récupération :', erreurResultats);
-} else {
-  console.log('Nombre de résultats réels récupérés :', resultatsReels.length);
-}
-// Récupérer les élèves et les classes
-const { data: elevesReels, error: erreurEleves } = await dbProf
-  .from('eleves')
-  .select('id, code, classe_id');
-
-const { data: classesReelles, error: erreurClasses } = await dbProf
-  .from('classes')
-  .select('id, nom, niveau');
-
-if (erreurEleves || erreurClasses) {
-  console.error('Erreur élèves :', erreurEleves);
-  console.error('Erreur classes :', erreurClasses);
-} else {
-  console.log('Nombre d’élèves récupérés :', elevesReels.length);
-  console.log('Classes récupérées :', classesReelles.map(c => c.nom));
-  // Remplir le menu avec les classes de test
-const menuClasses = document.getElementById('classe');
-
-menuClasses.replaceChildren();
-
-classesReelles.forEach(classe => {
-  const option = document.createElement('option');
-  option.value = classe.nom;
-  option.textContent = classe.nom;
-  menuClasses.appendChild(option);
-});
-  // Associer les élèves à leurs classes
-CLASSES_REELLES = {};
-
-classesReelles.forEach(classe => {
-  CLASSES_REELLES[classe.nom] = elevesReels
-    .filter(eleve => eleve.classe_id === classe.id)
-    .map(eleve => eleve.code);
-});
-
-// Associer chaque résultat à son élève
-SEANCES_REELLES = (resultatsReels || []).map(resultat => {
-  const eleve = elevesReels.find(e => e.id === resultat.eleve_id);
-
-  return {
-    code: eleve ? eleve.code : 'Inconnu',
-    date: resultat.date_seance,
-    type: resultat.activite,
-    verbe: resultat.verbe,
-    temps: resultat.temps,
-  correct: Math.round(resultat.score * resultat.nb_questions / 100),
-total: resultat.nb_questions
-  };
-});
-
-console.log('Classes associées :', CLASSES_REELLES);
-console.log('Séances réelles préparées :', SEANCES_REELLES.length);
-  // Actualiser le tableau avec les données Supabase
-render();
+if (!chargementReussi) {
+  document.getElementById('tableauProfesseur').hidden = true;
+  document.getElementById('connexionProfesseur').hidden = false;
+  message.textContent = 'Impossible de charger les résultats. Réessayez.';
 }
 });
 // Données réelles chargées depuis Supabase
