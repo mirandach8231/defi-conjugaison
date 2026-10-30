@@ -10,6 +10,37 @@
 <body>
 <header><h1>Défi Conjugaison</h1><p>Espace professeur — Démonstration V2</p></header>
 <main>
+<section class="card" id="connexionProfesseur">
+  <h2>Connexion professeur</h2>
+
+  <p>Connectez-vous pour consulter les résultats de vos élèves.</p>
+
+  <form id="formConnexionProfesseur">
+    <p>
+      <label for="emailProfesseur">Adresse e-mail</label><br>
+      <input
+        type="email"
+        id="emailProfesseur"
+        autocomplete="username"
+        required
+      >
+    </p>
+
+    <p>
+      <label for="motDePasseProfesseur">Mot de passe</label><br>
+      <input
+        type="password"
+        id="motDePasseProfesseur"
+        autocomplete="current-password"
+        required
+      >
+    </p>
+
+    <button type="submit">Se connecter</button>
+  </form>
+
+  <p id="messageConnexionProfesseur" role="status"></p>
+</section>
 <div class="notice"><strong>Démonstration uniquement :</strong> élèves et résultats entièrement fictifs. Cette page est publique et ne reçoit aucune donnée réelle.</div>
 <section class="card"><h2>Choisir une classe et une activité</h2><div class="controls"><label>Classe<select id="classe"><option>5e A</option><option>4e B</option><option>3e C</option></select></label><label>Activité<select id="type"><option value="tous">Toutes les activités</option><option value="entrainement">Entraînement</option><option value="evaluation">Évaluation</option></select></label></div></section>
 <section class="card"><h2>Vue d'ensemble</h2><div class="stats"><div class="stat"><strong id="nbEleves">—</strong><p>Élèves</p></div><div class="stat"><strong id="moyenne">—</strong><p>Réussite moyenne</p></div><div class="stat"><strong id="nbSeances">—</strong><p>Séances affichées</p></div></div></section>
