@@ -72,6 +72,58 @@ const dbProf = window.supabase.createClient(
   }
 );
 // Connexion et vérification du compte professeur
+async function chargerTableauProfesseur() {
+  const { data: resultatsReels, error: erreurResultats } = await dbProf
+    .from('resultats')
+    .select('id, eleve_id, activite, verbe, temps, score, nb_questions, date_seance');
+
+  const { data: elevesReels, error: erreurEleves } = await dbProf
+    .from('eleves')
+    .select('id, code, classe_id');
+
+  const { data: classesReelles, error: erreurClasses } = await dbProf
+    .from('classes')
+    .select('id, nom, niveau');
+
+  if (erreurResultats || erreurEleves || erreurClasses) {
+    console.error('Erreur de chargement :',
+      erreurResultats, erreurEleves, erreurClasses);
+    return false;
+  }
+
+  const menuClasses = document.getElementById('classe');
+  menuClasses.replaceChildren();
+
+  CLASSES_REELLES = {};
+
+  classesReelles.forEach(classe => {
+    const option = document.createElement('option');
+    option.value = classe.nom;
+    option.textContent = classe.nom;
+    menuClasses.appendChild(option);
+
+    CLASSES_REELLES[classe.nom] = elevesReels
+      .filter(eleve => eleve.classe_id === classe.id)
+      .map(eleve => eleve.code);
+  });
+
+  SEANCES_REELLES = resultatsReels.map(resultat => {
+    const eleve = elevesReels.find(e => e.id === resultat.eleve_id);
+
+    return {
+      code: eleve ? eleve.code : 'Inconnu',
+      date: resultat.date_seance,
+      type: resultat.activite,
+      verbe: resultat.verbe,
+      temps: resultat.temps,
+      correct: Math.round(resultat.score * resultat.nb_questions / 100),
+      total: resultat.nb_questions
+    };
+  });
+
+  render();
+  return true;
+}
 document.getElementById('formConnexionProfesseur')
   .addEventListener('submit', async function (event) {
     event.preventDefault();
