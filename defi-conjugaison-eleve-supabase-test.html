@@ -376,4 +376,22 @@ syncEl('syncLogout').addEventListener('click',async()=>{if(syncDb)await syncDb.a
  syncDb=window.supabase.createClient(SYNC_URL,SYNC_PUBLIC_KEY);
  try{await syncCheck();}catch(e){syncMessage('Vérification du compte impossible : '+e.message,true);}
 })();
+</script><script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(registration => {
+          console.log(
+            'Service worker Défi Conjugaison enregistré :',
+            registration.scope
+          );
+        })
+        .catch(error => {
+          console.error(
+            'Erreur service worker Défi Conjugaison :',
+            error
+          );
+        });
+    });
+  }
 </script></body></html>
