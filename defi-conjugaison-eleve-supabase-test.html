@@ -317,7 +317,12 @@ async function syncResults(answerList,activityMode){
 }
 syncEl('syncLogin').addEventListener('click',async()=>{
  if(!syncDb)return syncMessage('Bibliothèque Supabase indisponible.',true);
- const email=syncEl('syncEmail').value.trim(),password=syncEl('syncPassword').value;
+const identifiant = syncEl('syncEmail').value.trim();
+const password = syncEl('syncPassword').value;
+const codeEleve = /^[345][A-Z]-\d{3}$/i.test(identifiant);
+const email = codeEleve
+  ? 'eleve-' + identifiant.toLowerCase() + '@example.com'
+  : identifiant;
  if(!email||!password)return syncMessage('Saisis ton identifiant et ton mot de passe.',true);
  syncEl('syncLogin').disabled=true;syncMessage('Connexion en cours…');
  try{const {error}=await syncDb.auth.signInWithPassword({email,password});if(error)throw error;syncEl('syncPassword').value='';await syncCheck();}
