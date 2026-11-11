@@ -1,0 +1,27 @@
+
+{
+  "id": "/defi-conjugaison/defi-conjugaison-eleve-supabase-test.html",
+  "name": "Défi Conjugaison",
+  "short_name": "Défi Conjugaison",
+  "description": "Application d'entraînement à la conjugaison pour les élèves de collège.",
+  "start_url": "/defi-conjugaison/defi-conjugaison-eleve-supabase-test.html",
+  "scope": "/defi-conjugaison/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/defi-conjugaison/icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/defi-conjugaison/icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
